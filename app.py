@@ -32,7 +32,7 @@ class App:
     def on_render(self):
         self._display_surf.fill((0, 0, 0))
         pygame.draw.rect(self._display_surf, (0, 128, 255), pygame.Rect(self.player.x, self.player.y, self.x, self.y))
-        self.maze.load_maze(self._display_surf)
+        self.maze.load_maze("draw", self._display_surf)
         pygame.display.flip()
 
     def on_cleanup(self):
@@ -42,6 +42,8 @@ class App:
         if self.on_init() == False:
             self._running = False
 
+        self.maze.load_maze("fill", None)
+
         while self._running:
             self.on_quit()
             
@@ -49,16 +51,20 @@ class App:
             keys = pygame.key.get_pressed()
 
             if keys[K_RIGHT]:
-                self.player.move_right()
+                if not self.maze.check_collision(self.player.x, self.player.y, "right"):
+                    self.player.move_right()
 
             if keys[K_LEFT]:
-                self.player.move_left()
+                if not self.maze.check_collision(self.player.x, self.player.y, "left"):
+                    self.player.move_left()
 
             if keys[K_UP]:
-                self.player.move_up()
+                if not self.maze.check_collision(self.player.x, self.player.y, "up"):
+                    self.player.move_up()
 
             if keys[K_DOWN]:
-                self.player.move_down()
+                if not self.maze.check_collision(self.player.x, self.player.y, "down"):
+                    self.player.move_down()
 
             if keys[K_ESCAPE]:
                 self._running = False
