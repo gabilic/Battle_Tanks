@@ -5,7 +5,7 @@ import maze
 
 class App:
     window_width = 800
-    window_height = 600
+    window_height = 800
     player = 0
     x = 32
     y = 32
@@ -24,6 +24,7 @@ class App:
         self._display_surf = pygame.display.set_mode((self.window_width, self.window_height), pygame.HWSURFACE)
         pygame.display.set_caption("Battle tanks")
         self._running = True
+        self.maze.generate_maze()
         self._block_surf = {"wall": pygame.image.load("img\\wall.png"),
                             "wall_e": pygame.image.load("img\\wall_e.png"),
                             "wall_ens": pygame.image.load("img\\wall_ens.png"),

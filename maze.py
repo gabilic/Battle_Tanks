@@ -1,3 +1,4 @@
+from random import shuffle, randrange
 import pygame
 
 class Maze:
@@ -9,22 +10,37 @@ class Maze:
     thin_h = 11
     
     def __init__(self, x, y):
-        self.M = 11
-        self.N = 11
+        self.M = 25
+        self.N = 25
         self.x = x
         self.y = y
         self.block_list = []
-        self.maze = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                     1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
-                     1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1,
-                     1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
-                     1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1,
-                     1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1,
-                     1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-                     1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1,
-                     1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1,
-                     1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
-                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        self.maze = []
+
+    def generate_maze(self):
+        w = (self.M - 1) // 2
+        h = (self.N - 1) // 2
+        vis = [[0] * w + [1] for _ in range(h)] + [[1] * (w + 1)]
+        ver = [["10"] * w + ['1'] for _ in range(h)] + [[]]
+        hor = [["11"] * w + ['1'] for _ in range(h + 1)]
+     
+        def walk(x, y):
+            vis[y][x] = 1
+     
+            d = [(x - 1, y), (x, y + 1), (x + 1, y), (x, y - 1)]
+            shuffle(d)
+            for (xx, yy) in d:
+                if vis[yy][xx]: continue
+                if xx == x: hor[max(y, yy)][x] = "10"
+                if yy == y: ver[y][max(x, xx)] = "00"
+                walk(xx, yy)
+     
+        walk(randrange(w), randrange(h))
+     
+        maze = ""
+        for (a, b) in zip(hor, ver):
+            maze += ''.join(a + ['\n'] + b + ['\n'])
+        self.maze = [int(i) for i in maze if i != "\n"]
 
     def load_maze(self, option, display_surf, image_surf):
         for i in range(self.M * self.N):
@@ -86,7 +102,7 @@ class Maze:
                         elif option == "fill":
                             self.fill_maze(x, y, "w", False)
                             self.fill_maze(x, y, "n", False)
-                    elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
+                    elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 0:
                         if option == "draw": display_surf.blit(pygame.transform.rotate(image_surf["wall_es"], 90), (x, y))
                         elif option == "fill":
                             self.fill_maze(x, y, "n", False)
