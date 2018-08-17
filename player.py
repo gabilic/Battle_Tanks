@@ -1,6 +1,8 @@
 class Player:
     x = 32
     y = 32
+    w = 29
+    h = 29
     speed = 1
 
     def move_right(self):

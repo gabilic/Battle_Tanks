@@ -6,7 +6,6 @@ import maze
 class App:
     window_width = 800
     window_height = 800
-    player = 0
     x = 32
     y = 32
 
@@ -39,7 +38,8 @@ class App:
 
     def on_render(self):
         self._display_surf.fill((100, 100, 100))
-        pygame.draw.rect(self._display_surf, (0, 128, 255), pygame.Rect(self.player.x, self.player.y, self.x, self.y))
+        self._display_surf.blit(pygame.image.load("img\\tank.png"), (self.player.x, self.player.y))
+##        pygame.draw.rect(self._display_surf, (0, 128, 255), pygame.Rect(self.player.x, self.player.y, self.x, self.y))
         self.maze.load_maze("draw", self._display_surf, self._block_surf)
         pygame.display.flip()
 
@@ -59,19 +59,19 @@ class App:
             keys = pygame.key.get_pressed()
 
             if keys[K_RIGHT]:
-                if not self.maze.check_collision(self.player.x, self.player.y, "right"):
+                if not self.maze.check_collision(self.player, "right"):
                     self.player.move_right()
 
             if keys[K_LEFT]:
-                if not self.maze.check_collision(self.player.x, self.player.y, "left"):
+                if not self.maze.check_collision(self.player, "left"):
                     self.player.move_left()
 
             if keys[K_UP]:
-                if not self.maze.check_collision(self.player.x, self.player.y, "up"):
+                if not self.maze.check_collision(self.player, "up"):
                     self.player.move_up()
 
             if keys[K_DOWN]:
-                if not self.maze.check_collision(self.player.x, self.player.y, "down"):
+                if not self.maze.check_collision(self.player, "down"):
                     self.player.move_down()
 
             if keys[K_ESCAPE]:

@@ -2,10 +2,8 @@ from random import shuffle, randrange
 import pygame
 
 class Maze:
-    x = 0
-    y = 0
-    w = 32
-    h = 32
+    w = 31
+    h = 31
     thin_w = 11
     thin_h = 11
     
@@ -137,25 +135,25 @@ class Maze:
             elif side == "n":
                 self.block_list.append({'x': x + self.thin_w, 'y': y, 'w': self.w - self.thin_w * 2, 'h': self.h - self.thin_h})
                 
-    def check_collision(self, player_x, player_y, side):
+    def check_collision(self, player, side):
         collision = False
 
         for block in self.block_list:
             
             if side == "right":
-                if block['x'] <= player_x + self.w <= block['x'] + block['w'] and block['y'] < player_y + self.h and player_y < block['y'] + block['h']:
+                if block['x'] <= player.x + player.w + 1 < block['x'] + block['w'] and block['y'] <= player.y + player.h and player.y <= block['y'] + block['h']:
                     collision = True
 
             if side == "left":
-                if block['x'] <= player_x <= block['x'] + block['w'] and block['y'] < player_y + self.h and player_y < block['y'] + block['h']:
+                if block['x'] < player.x - 1 <= block['x'] + block['w'] and block['y'] <= player.y + player.h and player.y <= block['y'] + block['h']:
                     collision = True
 
             if side == "up":
-                if block['x'] < player_x + self.w and player_x < block['x'] + block['w'] and block['y'] <= player_y <= block['y'] + block['h']:
+                if block['x'] <= player.x + player.w and player.x <= block['x'] + block['w'] and block['y'] < player.y - 1 <= block['y'] + block['h']:
                     collision = True
 
             if side == "down":
-                if block['x'] < player_x + self.w and player_x < block['x'] + block['w'] and block['y'] <= player_y + self.h <= block['y'] + block['h']:
+                if block['x'] <= player.x + player.w and player.x <= block['x'] + block['w'] and block['y'] <= player.y + player.h + 1 < block['y'] + block['h']:
                     collision = True
 
         return collision
