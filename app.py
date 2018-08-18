@@ -13,7 +13,6 @@ class App:
         self._running = True
         self._display_surf = None
         self._image_surf = None
-        self._block_surf = None
         self._clock = pygame.time.Clock()
         self.player = player.Player()
         self.maze = maze.Maze(self.x, self.y)
@@ -24,12 +23,6 @@ class App:
         pygame.display.set_caption("Battle tanks")
         self._running = True
         self.maze.generate_maze()
-        self._block_surf = {"wall": pygame.image.load("img\\wall.png"),
-                            "wall_e": pygame.image.load("img\\wall_e.png"),
-                            "wall_ens": pygame.image.load("img\\wall_ens.png"),
-                            "wall_ensw": pygame.image.load("img\\wall_ensw.png"),
-                            "wall_es": pygame.image.load("img\\wall_es.png"),
-                            "wall_ew": pygame.image.load("img\\wall_ew.png")}
 
     def on_quit(self):
         for event in pygame.event.get():
@@ -38,9 +31,8 @@ class App:
 
     def on_render(self):
         self._display_surf.fill((100, 100, 100))
-        self._display_surf.blit(pygame.image.load("img\\tank.png"), (self.player.x, self.player.y))
-##        pygame.draw.rect(self._display_surf, (0, 128, 255), pygame.Rect(self.player.x, self.player.y, self.x, self.y))
-        self.maze.load_maze("draw", self._display_surf, self._block_surf)
+        self._display_surf.blit(self.player.image, (self.player.rect.x, self.player.rect.y))
+        self.maze.load_maze("draw", self._display_surf)
         pygame.display.flip()
 
     def on_cleanup(self):
@@ -50,7 +42,7 @@ class App:
         if self.on_init() == False:
             self._running = False
 
-        self.maze.load_maze("fill", None, None)
+        self.maze.load_maze("fill", None)
 
         while self._running:
             self.on_quit()
