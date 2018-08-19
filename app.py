@@ -13,7 +13,12 @@ class App:
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.HWSURFACE)
         pygame.display.set_caption("Battle tanks")
         self.player = player.Player()
-        self.maze = maze.Maze()
+        self.maze = maze.Maze(None, 0, 0)
+        self.maze.load_maze()
+        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites.add(self.player)
+        for wall in self.maze.walls.sprites():
+            self.all_sprites.add(wall)
         self._clock = pygame.time.Clock()
 
     def on_quit(self):
@@ -23,8 +28,7 @@ class App:
 
     def on_render(self):
         self.screen.fill((100, 100, 100))
-        self.screen.blit(self.player.image, (self.player.rect.x, self.player.rect.y))
-        self.maze.load_maze("draw", self.screen)
+        self.all_sprites.draw(self.screen)
         pygame.display.flip()
 
     def on_cleanup(self):
@@ -34,29 +38,12 @@ class App:
         if self.on_init() == False:
             self._running = False
 
-        self.maze.load_maze("fill", None)
-
         while self._running:
             self.on_quit()
             
             pygame.event.pump()
             keys = pygame.key.get_pressed()
-
-            if keys[K_RIGHT]:
-                if not self.maze.check_collision(self.player, "right"):
-                    self.player.move_right()
-
-            if keys[K_LEFT]:
-                if not self.maze.check_collision(self.player, "left"):
-                    self.player.move_left()
-
-            if keys[K_UP]:
-                if not self.maze.check_collision(self.player, "up"):
-                    self.player.move_up()
-
-            if keys[K_DOWN]:
-                if not self.maze.check_collision(self.player, "down"):
-                    self.player.move_down()
+            self.player.update(self.player, self.maze.walls)
 
             if keys[K_ESCAPE]:
                 self._running = False

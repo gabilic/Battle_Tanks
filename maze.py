@@ -9,19 +9,26 @@ class Maze(pygame.sprite.Sprite):
     thin_w = 11
     thin_h = 11
     
-    def __init__(self):
+    def __init__(self, wall, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image_surf = {"wall": pygame.image.load("img\\wall.png").convert_alpha(),
+        self.image_dict = {"wall": pygame.image.load("img\\wall.png").convert_alpha(),
                            "wall_e": pygame.image.load("img\\wall_e.png").convert_alpha(),
                            "wall_ens": pygame.image.load("img\\wall_ens.png").convert_alpha(),
                            "wall_ensw": pygame.image.load("img\\wall_ensw.png").convert_alpha(),
                            "wall_es": pygame.image.load("img\\wall_es.png").convert_alpha(),
                            "wall_ew": pygame.image.load("img\\wall_ew.png").convert_alpha()}
+        self.walls = pygame.sprite.Group()
         self.M = 25
         self.N = 25
         self.block_list = []
         self.maze = []
         self.generate_maze()
+        if wall is not None:
+            self.image = wall
+            self.rect = self.image.get_rect()
+            self.rect.x = x
+            self.rect.y = y
+            self.mask = pygame.mask.from_surface(self.image)
 
     def generate_maze(self):
         w = (self.M - 1) // 2
@@ -48,120 +55,57 @@ class Maze(pygame.sprite.Sprite):
             maze += ''.join(a + ['\n'] + b + ['\n'])
         self.maze = [int(i) for i in maze if i != "\n"]
 
-    def load_maze(self, option, display_surf):
+    def load_maze(self):
         for i in range(self.M * self.N):
             x = (i % self.M) * self.x
             y = (i // self.M) * self.y
             if self.maze[i] == 1:
                 if i // self.M == 0 or i // self.M == self.N - 1 or i % self.M == 0 or i % self.M == self.M - 1:
-                    if option == "draw": display_surf.blit(self.image_surf["wall"], (x, y))
-                    elif option == "fill": self.block_list.append({'x': x, 'y': y, 'w': self.w, 'h': self.h})
+                    wall = Maze(self.image_dict["wall"], x, y)
+                    self.walls.add(wall)
                 else:
                     if self.maze[i - self.M] == 0 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 0:
-                        if option == "draw": display_surf.blit(self.image_surf["wall_e"], (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "e", False)
+                        wall = Maze(self.image_dict["wall_e"], x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_e"], 270), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "s", False)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_e"], 270), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_e"], 180), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "w", False)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_e"], 180), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 0:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_e"], 90), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "n", False)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_e"], 90), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
-                        if option == "draw": display_surf.blit(self.image_surf["wall_ens"], (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "e", False)
-                            self.fill_maze(x, y, "s", True)
+                        wall = Maze(self.image_dict["wall_ens"], x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_ens"], 270), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "s", False)
-                            self.fill_maze(x, y, "e", True)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ens"], 270), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_ens"], 180), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "w", False)
-                            self.fill_maze(x, y, "s", True)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ens"], 180), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_ens"], 90), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "n", False)
-                            self.fill_maze(x, y, "e", True)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ens"], 90), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
-                        if option == "draw": display_surf.blit(self.image_surf["wall_es"], (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "e", False)
-                            self.fill_maze(x, y, "s", False)
+                        wall = Maze(self.image_dict["wall_es"], x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_es"], 270), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "s", False)
-                            self.fill_maze(x, y, "w", False)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_es"], 270), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_es"], 180), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "w", False)
-                            self.fill_maze(x, y, "n", False)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_es"], 180), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 0:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_es"], 90), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "n", False)
-                            self.fill_maze(x, y, "e", False)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_es"], 90), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(self.image_surf["wall_ew"], (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "e", True)
+                        wall = Maze(self.image_dict["wall_ew"], x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
-                        if option == "draw": display_surf.blit(pygame.transform.rotate(self.image_surf["wall_ew"], 90), (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "s", True)
+                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ew"], 90), x, y)
+                        self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
-                        if option == "draw": display_surf.blit(self.image_surf["wall_ensw"], (x, y))
-                        elif option == "fill":
-                            self.fill_maze(x, y, "e", True)
-                            self.fill_maze(x, y, "s", True)
-
-    def fill_maze(self, x, y, side, wide_wall):
-        if wide_wall:
-            if side == "e":
-                self.block_list.append({'x': x, 'y': y + self.thin_h, 'w': self.w, 'h': self.h - self.thin_h * 2})
-            elif side == "s":
-                self.block_list.append({'x': x + self.thin_w, 'y': y, 'w': self.w - self.thin_w * 2, 'h': self.h})
-        else:
-            if side == "e":
-                self.block_list.append({'x': x + self.thin_w, 'y': y + self.thin_h, 'w': self.w - self.thin_w, 'h': self.h - self.thin_h * 2})
-            elif side == "s":
-                self.block_list.append({'x': x + self.thin_w, 'y': y + self.thin_h, 'w': self.w - self.thin_w * 2, 'h': self.h - self.thin_h})
-            elif side == "w":
-                self.block_list.append({'x': x, 'y': y + self.thin_h, 'w': self.w - self.thin_w, 'h': self.h - self.thin_h * 2})
-            elif side == "n":
-                self.block_list.append({'x': x + self.thin_w, 'y': y, 'w': self.w - self.thin_w * 2, 'h': self.h - self.thin_h})
-                
-    def check_collision(self, player, side):
-        collision = False
-
-        for block in self.block_list:
-            
-            if side == "right":
-                if block['x'] <= player.rect.x + player.w + 1 < block['x'] + block['w'] and block['y'] <= player.rect.y + player.h and player.rect.y <= block['y'] + block['h']:
-                    collision = True
-
-            if side == "left":
-                if block['x'] < player.rect.x - 1 <= block['x'] + block['w'] and block['y'] <= player.rect.y + player.h and player.rect.y <= block['y'] + block['h']:
-                    collision = True
-
-            if side == "up":
-                if block['x'] <= player.rect.x + player.w and player.rect.x <= block['x'] + block['w'] and block['y'] < player.rect.y - 1 <= block['y'] + block['h']:
-                    collision = True
-
-            if side == "down":
-                if block['x'] <= player.rect.x + player.w and player.rect.x <= block['x'] + block['w'] and block['y'] <= player.rect.y + player.h + 1 < block['y'] + block['h']:
-                    collision = True
-
-        return collision
+                        wall = Maze(self.image_dict["wall_ensw"], x, y)
+                        self.walls.add(wall)

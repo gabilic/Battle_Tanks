@@ -1,3 +1,4 @@
+from pygame.locals import *
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -13,15 +14,26 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+        self.mask = pygame.mask.from_surface(self.image)
 
-    def move_right(self):
-        self.rect.x += self.speed
+    def update(self, player, walls):
+        keys = pygame.key.get_pressed()
+        if keys[K_RIGHT]:
+            player.rect.x += player.speed
+            if pygame.sprite.spritecollide(player, walls, False, pygame.sprite.collide_mask):
+                player.rect.x -= player.speed
 
-    def move_left(self):
-        self.rect.x -= self.speed
+        if keys[K_LEFT]:
+            player.rect.x -= player.speed
+            if pygame.sprite.spritecollide(player, walls, False, pygame.sprite.collide_mask):
+                player.rect.x += player.speed
 
-    def move_up(self):
-        self.rect.y -= self.speed
+        if keys[K_UP]:
+            player.rect.y -= player.speed
+            if pygame.sprite.spritecollide(player, walls, False, pygame.sprite.collide_mask):
+                player.rect.y += player.speed
 
-    def move_down(self):
-        self.rect.y += self.speed
+        if keys[K_DOWN]:
+            player.rect.y += player.speed
+            if pygame.sprite.spritecollide(player, walls, False, pygame.sprite.collide_mask):
+                player.rect.y -= player.speed
