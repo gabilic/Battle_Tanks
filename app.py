@@ -6,23 +6,15 @@ import maze
 class App:
     window_width = 800
     window_height = 800
-    x = 32
-    y = 32
-
-    def __init__(self):
-        self._running = True
-        self._display_surf = None
-        self._image_surf = None
-        self._clock = pygame.time.Clock()
-        self.player = player.Player()
-        self.maze = maze.Maze(self.x, self.y)
 
     def on_init(self):
         pygame.init()
-        self._display_surf = pygame.display.set_mode((self.window_width, self.window_height), pygame.HWSURFACE)
-        pygame.display.set_caption("Battle tanks")
         self._running = True
-        self.maze.generate_maze()
+        self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.HWSURFACE)
+        pygame.display.set_caption("Battle tanks")
+        self.player = player.Player()
+        self.maze = maze.Maze()
+        self._clock = pygame.time.Clock()
 
     def on_quit(self):
         for event in pygame.event.get():
@@ -30,9 +22,9 @@ class App:
                 self._running = False
 
     def on_render(self):
-        self._display_surf.fill((100, 100, 100))
-        self._display_surf.blit(self.player.image, (self.player.rect.x, self.player.rect.y))
-        self.maze.load_maze("draw", self._display_surf)
+        self.screen.fill((100, 100, 100))
+        self.screen.blit(self.player.image, (self.player.rect.x, self.player.rect.y))
+        self.maze.load_maze("draw", self.screen)
         pygame.display.flip()
 
     def on_cleanup(self):

@@ -2,25 +2,26 @@ from random import shuffle, randrange
 import pygame
 
 class Maze(pygame.sprite.Sprite):
+    x = 32
+    y = 32
     w = 31
     h = 31
     thin_w = 11
     thin_h = 11
     
-    def __init__(self, x, y):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        self.image_surf = {"wall": pygame.image.load("img\\wall.png").convert_alpha(),
+                           "wall_e": pygame.image.load("img\\wall_e.png").convert_alpha(),
+                           "wall_ens": pygame.image.load("img\\wall_ens.png").convert_alpha(),
+                           "wall_ensw": pygame.image.load("img\\wall_ensw.png").convert_alpha(),
+                           "wall_es": pygame.image.load("img\\wall_es.png").convert_alpha(),
+                           "wall_ew": pygame.image.load("img\\wall_ew.png").convert_alpha()}
         self.M = 25
         self.N = 25
-        self.x = x
-        self.y = y
         self.block_list = []
         self.maze = []
-        self.image_surf = {"wall": pygame.image.load("img\\wall.png"),
-                           "wall_e": pygame.image.load("img\\wall_e.png"),
-                           "wall_ens": pygame.image.load("img\\wall_ens.png"),
-                           "wall_ensw": pygame.image.load("img\\wall_ensw.png"),
-                           "wall_es": pygame.image.load("img\\wall_es.png"),
-                           "wall_ew": pygame.image.load("img\\wall_ew.png")}
+        self.generate_maze()
 
     def generate_maze(self):
         w = (self.M - 1) // 2
