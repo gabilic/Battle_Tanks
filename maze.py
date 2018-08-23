@@ -1,7 +1,7 @@
 from random import shuffle, randrange
-import pygame
+import pygame as pg
 
-class Maze(pygame.sprite.Sprite):
+class Maze(pg.sprite.Sprite):
     x = 32
     y = 32
     w = 31
@@ -10,14 +10,14 @@ class Maze(pygame.sprite.Sprite):
     thin_h = 11
     
     def __init__(self, wall, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image_dict = {"wall": pygame.image.load("img\\wall.png").convert_alpha(),
-                           "wall_e": pygame.image.load("img\\wall_e.png").convert_alpha(),
-                           "wall_ens": pygame.image.load("img\\wall_ens.png").convert_alpha(),
-                           "wall_ensw": pygame.image.load("img\\wall_ensw.png").convert_alpha(),
-                           "wall_es": pygame.image.load("img\\wall_es.png").convert_alpha(),
-                           "wall_ew": pygame.image.load("img\\wall_ew.png").convert_alpha()}
-        self.walls = pygame.sprite.Group()
+        pg.sprite.Sprite.__init__(self)
+        self.image_dict = {"wall": pg.image.load("img\\wall.png").convert_alpha(),
+                           "wall_e": pg.image.load("img\\wall_e.png").convert_alpha(),
+                           "wall_ens": pg.image.load("img\\wall_ens.png").convert_alpha(),
+                           "wall_ensw": pg.image.load("img\\wall_ensw.png").convert_alpha(),
+                           "wall_es": pg.image.load("img\\wall_es.png").convert_alpha(),
+                           "wall_ew": pg.image.load("img\\wall_ew.png").convert_alpha()}
+        self.walls = pg.sprite.Group()
         self.M = 25
         self.N = 25
         self.block_list = []
@@ -28,7 +28,7 @@ class Maze(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.x = x
             self.rect.y = y
-            self.mask = pygame.mask.from_surface(self.image)
+            self.mask = pg.mask.from_surface(self.image)
 
     def generate_maze(self):
         w = (self.M - 1) // 2
@@ -68,43 +68,43 @@ class Maze(pygame.sprite.Sprite):
                         wall = Maze(self.image_dict["wall_e"], x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_e"], 270), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_e"], 270), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_e"], 180), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_e"], 180), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 0:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_e"], 90), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_e"], 90), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
                         wall = Maze(self.image_dict["wall_ens"], x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ens"], 270), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_ens"], 270), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ens"], 180), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_ens"], 180), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ens"], 90), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_ens"], 90), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
                         wall = Maze(self.image_dict["wall_es"], x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_es"], 270), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_es"], 270), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_es"], 180), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_es"], 180), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 0:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_es"], 90), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_es"], 90), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 0 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 0 and self.maze[i - 1] == 1:
                         wall = Maze(self.image_dict["wall_ew"], x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 0 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 0:
-                        wall = Maze(pygame.transform.rotate(self.image_dict["wall_ew"], 90), x, y)
+                        wall = Maze(pg.transform.rotate(self.image_dict["wall_ew"], 90), x, y)
                         self.walls.add(wall)
                     elif self.maze[i - self.M] == 1 and self.maze[i + 1] == 1 and self.maze[i + self.M] == 1 and self.maze[i - 1] == 1:
                         wall = Maze(self.image_dict["wall_ensw"], x, y)

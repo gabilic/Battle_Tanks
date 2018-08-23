@@ -1,5 +1,4 @@
-from pygame.locals import *
-import pygame
+import pygame as pg
 import player
 import maze
 
@@ -8,31 +7,31 @@ class App:
     window_height = 800
 
     def on_init(self):
-        pygame.init()
+        pg.init()
         self._running = True
-        self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.HWSURFACE)
-        pygame.display.set_caption("Battle tanks")
-        self.player = player.Player()
+        self.screen = pg.display.set_mode((self.window_width, self.window_height), pg.HWSURFACE)
+        pg.display.set_caption("Battle tanks")
+        self.player = player.Player(self)
         self.maze = maze.Maze(None, 0, 0)
         self.maze.load_maze()
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = pg.sprite.Group()
         self.all_sprites.add(self.player)
         for wall in self.maze.walls.sprites():
             self.all_sprites.add(wall)
-        self._clock = pygame.time.Clock()
+        self._clock = pg.time.Clock()
 
     def on_quit(self):
-        for event in pygame.event.get():
-            if event.type == QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 self._running = False
 
     def on_render(self):
         self.screen.fill((100, 100, 100))
         self.all_sprites.draw(self.screen)
-        pygame.display.flip()
+        pg.display.flip()
 
     def on_cleanup(self):
-        pygame.quit()
+        pg.quit()
 
     def on_execute(self):
         if self.on_init() == False:
@@ -41,11 +40,11 @@ class App:
         while self._running:
             self.on_quit()
             
-            pygame.event.pump()
-            keys = pygame.key.get_pressed()
-            self.player.update(self.player, self.maze.walls)
+            pg.event.pump()
+            keys = pg.key.get_pressed()
+            self.player.update()
 
-            if keys[K_ESCAPE]:
+            if keys[pg.K_ESCAPE]:
                 self._running = False
 
             self.on_render()
