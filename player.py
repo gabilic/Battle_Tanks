@@ -1,4 +1,5 @@
 import pygame as pg
+import bullet
 vec = pg.math.Vector2
 
 class Player(pg.sprite.Sprite):
@@ -6,7 +7,9 @@ class Player(pg.sprite.Sprite):
     y = 32
     w = 29
     h = 29
-    speed = 1
+    bullet_rate = 3010
+    bullet_offset = vec(18, 0)
+    speed = 2
     rot_speed = 2
 
     def __init__(self, game):
@@ -20,6 +23,8 @@ class Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.pos = self.rect.center
         self.rot = 0
+        self.bullet = None
+        self.last_shot = 0
         self.mask = pg.mask.from_surface(self.image)
 
     def update(self):
@@ -63,3 +68,11 @@ class Player(pg.sprite.Sprite):
             if pg.sprite.spritecollide(self, self.game.maze.walls, False, pg.sprite.collide_mask):
                 self.pos += vec(self.speed / 2, 0).rotate(-self.rot)
                 self.rect.center = self.pos
+        
+        if keys[pg.K_SPACE]:
+            now = pg.time.get_ticks()
+            if now - self.last_shot > self.bullet_rate:
+                self.last_shot = now
+                dir = vec(1, 0).rotate(-self.rot)
+                pos = self.pos + self.bullet_offset.rotate(-self.rot)
+                self.bullet = bullet.Bullet(self.game, pos, dir)

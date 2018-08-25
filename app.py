@@ -43,11 +43,13 @@ class App:
             pg.event.pump()
             keys = pg.key.get_pressed()
             self.player.update()
+            if self.player.bullet is not None:
+                self.player.bullet.update()
 
             if keys[pg.K_ESCAPE]:
                 self._running = False
 
             self.on_render()
-            self._clock.tick(120)
+            self._clock.tick(60)
         
         self.on_cleanup()
